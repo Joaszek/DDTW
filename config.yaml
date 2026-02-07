@@ -1,0 +1,31 @@
+# Data configuration
+data_root: "./ml-data"
+categories:
+  - "BAS"
+  - "B6"
+  - "B10"
+  - "B15"
+
+# File patterns for parallel signals
+parallel_files:
+  RR: "ABP_RR-CBFV_RR"
+  SPO: "ABP_SPO-CBFV_SPO"
+  SPP: "ABP_SPP-CBFV_SPP"
+
+# Train/val/test split (ratios should sum to 1.0)
+train_ratio_per_class: 0.7
+val_ratio_per_class: 0.15
+test_ratio_per_class: 0.15
+
+# Random seed for reproducibility
+random_state: 42
+
+# Window parameters
+window_len: 32
+window_step: 8
+
+# Preprocessing flags
+use_log1p: true
+use_norm_by_median: true
+use_resampled_shape: true
+resample_len: 16
