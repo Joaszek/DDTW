@@ -150,7 +150,3 @@ Edit `feature_engineering.py` to add or modify feature extraction logic in `buil
 ### Changing Data Processing
 
 Modify preprocessing in `data_utils.py` or adjust pipeline logic in `data_pipeline.py`.
-
-## License
-
-[Your License Here]
