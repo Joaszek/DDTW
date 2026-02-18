@@ -4,7 +4,6 @@ import numpy as np
 from typing import List
 
 from config import config
-from data_utils import resample_1d
 
 
 def get_feature_names() -> List[str]:
@@ -35,12 +34,6 @@ def get_feature_names() -> List[str]:
     # Correlations
     for ch1, ch2 in channel_pairs:
         feature_names.append(f"{ch1}_{ch2}_corr")
-
-    # Shape features (if enabled)
-    if config.use_resampled_shape:
-        for channel in channels:
-            for i in range(config.resample_len):
-                feature_names.append(f"{channel}_shape_{i}")
 
     return feature_names
 
@@ -162,18 +155,5 @@ def build_window_features(rr_win: np.ndarray, spo_win: np.ndarray,
     # Correlations between channel pairs
     for _, _, _, _, _, _, w1, w2 in channel_pairs:
         feats.append(corr_safe(w1, w2))
-
-    # Shape features (resampling) - often provides significant improvement
-    if config.use_resampled_shape:
-        # Dictionary of windows and their normalization
-        windows = {'rr': rr_win, 'spo': spo_win, 'spp': spp_win}
-
-        shape_normalize = lambda w: (w - w.mean()) / (w.std() + eps)
-
-        # Resample and normalize each channel
-        for channel_name in ['rr', 'spo', 'spp']:
-            shape = resample_1d(windows[channel_name], config.resample_len)
-            shape = shape_normalize(shape)
-            feats += shape.tolist()
 
     return np.array(feats, dtype=np.float32)

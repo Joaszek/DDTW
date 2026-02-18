@@ -27,5 +27,3 @@ window_step: 8
 # Preprocessing flags
 use_log1p: true
 use_norm_by_median: true
-use_resampled_shape: true
-resample_len: 16

@@ -14,7 +14,7 @@ from sklearn.metrics import (
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier, HistGradientBoostingClassifier
-
+import catboost
 from config import config
 from data_pipeline import load_all_data, split_train_val_test
 from feature_engineering import get_feature_names
@@ -170,7 +170,9 @@ def train_catboost(X_train, y_train, X_val, y_val, X_test, y_test,
         print("\n" + "=" * 80)
         print("MODEL: CatBoost")
 
-        cb.fit(X_train, y_train, eval_set=(X_val, y_val), use_best_model=True)
+        y_train_cb = np.asarray(y_train).astype(str)
+        y_val_cb = np.asarray(y_val).astype(str)
+        cb.fit(X_train, y_train_cb, eval_set=(X_val, y_val_cb), use_best_model=True)
 
         # Evaluate on validation set
         pred_val = cb.predict(X_val).reshape(-1)

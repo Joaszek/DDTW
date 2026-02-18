@@ -29,8 +29,6 @@ class Config:
         self.window_step: int = self._config["window_step"]
         self.use_log1p: bool = self._config["use_log1p"]
         self.use_norm_by_median: bool = self._config["use_norm_by_median"]
-        self.use_resampled_shape: bool = self._config["use_resampled_shape"]
-        self.resample_len: int = self._config["resample_len"]
 
     def __repr__(self) -> str:
         """Return string representation of config."""

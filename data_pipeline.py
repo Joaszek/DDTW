@@ -86,7 +86,7 @@ def load_all_data(categories: List[str] = None) -> Tuple[np.ndarray, np.ndarray,
     X = np.vstack([x for x, _ in all_rows])
     meta = pd.concat([m for _, m in all_rows], ignore_index=True)
     # Convert to numpy array explicitly to avoid pandas StringArray issues
-    y = np.array(meta["label"].values, dtype=str)
+    y = np.array(list(meta["label"]), dtype="U")
 
     print(f"X shape: {X.shape}")
     print(f"y counts:\n{meta['label'].value_counts()}")

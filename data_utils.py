@@ -77,24 +77,3 @@ def preprocess_cost_vector(x: np.ndarray) -> np.ndarray:
     x = np.clip(x, 0, np.percentile(x, 99.5))
 
     return x.astype(np.float32)
-
-
-def resample_1d(x: np.ndarray, target_len: int) -> np.ndarray:
-    """Resample 1D array to target length using linear interpolation.
-
-    Args:
-        x: Input array
-        target_len: Target length for resampled array
-
-    Returns:
-        Resampled array of target_len
-    """
-    if len(x) == 0:
-        return np.zeros((target_len,), dtype=np.float32)
-    if len(x) == 1:
-        return np.full((target_len,), float(x[0]), dtype=np.float32)
-
-    old_idx = np.linspace(0, 1, num=len(x), dtype=np.float32)
-    new_idx = np.linspace(0, 1, num=target_len, dtype=np.float32)
-    y = np.interp(new_idx, old_idx, x).astype(np.float32)
-    return y
