@@ -14,6 +14,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import HistGradientBoostingClassifier
 
 DATA_ROOT = Path(r"./ml-data")
+RESULTS_DIR = Path(r"./results")
+RESULTS_DIR.mkdir(exist_ok=True)
 CATEGORIES = ["BAS", "B6", "B10", "B15"]
 
 PARALLEL_FILES = {
@@ -291,7 +293,33 @@ for name, model in models.items():
     disp = ConfusionMatrixDisplay(cm, display_labels=CATEGORIES)
     disp.plot(values_format="d")
     plt.title(name)
-    plt.show()
+    plt.savefig(RESULTS_DIR / f"{name}_confusion_matrix.png", dpi=150, bbox_inches="tight")
+    plt.close()
+
+    fig, ax = plt.subplots()
+    ax.bar(range(len(y_test)), pred == y_test, width=1.0)
+    ax.set_title(f"{name} — correct predictions")
+    ax.set_xlabel("sample")
+    ax.set_ylabel("correct")
+    plt.savefig(RESULTS_DIR / f"{name}_plot.png", dpi=150, bbox_inches="tight")
+    plt.close()
+
+    if hasattr(model, "feature_importances_"):
+        imp = model.feature_importances_
+        fi_df = pd.DataFrame({"feature_idx": range(len(imp)), "importance": imp})
+        fi_df = fi_df.sort_values("importance", ascending=False)
+        fi_df.to_csv(RESULTS_DIR / f"{name}_feature_importance.csv", index=False)
+
+        fig, ax = plt.subplots(figsize=(10, 6))
+        top_n = min(30, len(imp))
+        top = fi_df.head(top_n)
+        ax.barh(range(top_n), top["importance"].values)
+        ax.set_yticks(range(top_n))
+        ax.set_yticklabels([f"feat_{i}" for i in top["feature_idx"].values])
+        ax.invert_yaxis()
+        ax.set_title(f"{name} — top {top_n} feature importances")
+        plt.savefig(RESULTS_DIR / f"{name}_feature_importance.png", dpi=150, bbox_inches="tight")
+        plt.close()
 
 try:
     from catboost import CatBoostClassifier
@@ -319,43 +347,32 @@ try:
     disp = ConfusionMatrixDisplay(cm, display_labels=CATEGORIES)
     disp.plot(values_format="d")
     plt.title("CatBoost")
-    plt.show()
+    plt.savefig(RESULTS_DIR / "CatBoost_confusion_matrix.png", dpi=150, bbox_inches="tight")
+    plt.close()
 
-except Exception as e:
-    print("\n[INFO] CatBoost pominięty (brak biblioteki albo błąd importu).")
-    print("Jeśli chcesz CatBoost: pip install catboost")
+    fig, ax = plt.subplots()
+    ax.bar(range(len(y_test)), pred == y_test, width=1.0)
+    ax.set_title("CatBoost — correct predictions")
+    ax.set_xlabel("sample")
+    ax.set_ylabel("correct")
+    plt.savefig(RESULTS_DIR / "CatBoostplot.png", dpi=150, bbox_inches="tight")
+    plt.close()
 
-    print("Błąd:", repr(e))
+    imp = cb.get_feature_importance()
+    fi_df = pd.DataFrame({"feature_idx": range(len(imp)), "importance": imp})
+    fi_df = fi_df.sort_values("importance", ascending=False)
+    fi_df.to_csv(RESULTS_DIR / "CatBoost_feature_importance.csv", index=False)
 
-try:
-    from catboost import CatBoostClassifier
-
-    cb = CatBoostClassifier(
-        depth=8,
-        learning_rate=0.05,
-        iterations=1200,
-        loss_function="MultiClass",
-        eval_metric="Accuracy",
-        random_seed=RANDOM_STATE,
-        verbose=200
-    )
-
-
-
-    cb.fit(X_train, y_train, eval_set=(X_test, y_test), use_best_model=True)
-    pred = cb.predict(X_test).reshape(-1)
-
-    acc = accuracy_score(y_test, pred)
-    print("\n" + "="*80)
-    print("MODEL: CatBoost")
-    print("Accuracy:", acc)
-    print(classification_report(y_test, pred, digits=4))
-
-    cm = confusion_matrix(y_test, pred, labels=CATEGORIES)
-    disp = ConfusionMatrixDisplay(cm, display_labels=CATEGORIES)
-    disp.plot(values_format="d")
-    plt.title("CatBoost")
-    plt.show()
+    fig, ax = plt.subplots(figsize=(10, 6))
+    top_n = min(30, len(imp))
+    top = fi_df.head(top_n)
+    ax.barh(range(top_n), top["importance"].values)
+    ax.set_yticks(range(top_n))
+    ax.set_yticklabels([f"feat_{i}" for i in top["feature_idx"].values])
+    ax.invert_yaxis()
+    ax.set_title(f"CatBoost — top {top_n} feature importances")
+    plt.savefig(RESULTS_DIR / "CatBoost_feature_importance.png", dpi=150, bbox_inches="tight")
+    plt.close()
 
 except Exception as e:
     print("\n[INFO] CatBoost pominięty (brak biblioteki albo błąd importu).")
