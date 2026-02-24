@@ -106,7 +106,7 @@ from config import config
 from data_pipeline import load_all_data, split_train_test
 
 # Load data
-X, y, meta, all_rows = load_all_data(categories=["BAS", "B6"])
+X, y, meta, all_rows = load_all_data(categories=["BAS", "B6", "B10", "B15"])
 
 # Split train/test
 X_train, y_train, X_test, y_test = split_train_test(all_rows, X, y)

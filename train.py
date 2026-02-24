@@ -228,8 +228,7 @@ def train_catboost(X_train, y_train, X_val, y_val, X_test, y_test,
 
 def main():
     """Main training pipeline."""
-    # Load data - using only BAS and B6 categories as in the original code
-    categories_to_use = ["BAS", "B6"]
+    categories_to_use = ["BAS", "B6", "B10", "B15"]
     X, y, meta, all_rows = load_all_data(categories=categories_to_use)
 
     # Get feature names

@@ -187,7 +187,7 @@ def build_window_features(rr_win, spo_win, spp_win):
     return np.array(feats, dtype=np.float32)
 
 all_rows = []
-CATEGORIES = ["BAS", "B6"]
+CATEGORIES = ["BAS", "B6", "B10", "B15"]
 
 for cat in CATEGORIES:
     cat_dir = DATA_ROOT / cat
